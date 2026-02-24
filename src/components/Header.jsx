@@ -1,10 +1,10 @@
 import axios from "axios";
-import { useState } from "react";
+import { useSearch } from "../context/FilmSearchContext";
 
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 
 export default function Header() {
-  const [userSearch, setUserSearch] = useState("");
+  const { userSearch, setUserSearch, resultsList, setResultsList } = useSearch();
 
   const formSubmit = (e) => {
     e.preventDefault();
@@ -12,7 +12,9 @@ export default function Header() {
 
     axios.get(`${apiUrl}${userSearch}`).then((res) => {
       console.log("dati:", res.data);
-      console.log("res", res);
+      console.log("dati2:", res.data.results);
+
+      setResultsList(res.data.results);
     });
   };
 
