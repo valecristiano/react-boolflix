@@ -4,17 +4,33 @@ import { useSearch } from "../context/FilmSearchContext";
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 
 export default function Header() {
+  //Consumo dati da context
   const { userSearch, setUserSearch, setResultsList } = useSearch();
 
+  //funzione gestione dati di axios
+
+  const axiosDataManagement = (element) => {
+    return {
+      id: element.id,
+      title: element.title,
+      original_title: element.original_title === element.title ? "" : element.original_title,
+      language: element.original_language,
+      stars: element.vote_average,
+    };
+  };
+
+  //Funzione submut della search
   const formSubmit = (e) => {
     e.preventDefault();
     console.log("submit", userSearch);
-
+    // chiamata axios
     axios.get(`${apiUrl}${userSearch}`).then((res) => {
-      setResultsList(res.data.results);
+      const normalizedData = res.data.results.map((film) => axiosDataManagement(film));
+      setResultsList(normalizedData);
+      console.log(res.data.results);
     });
   };
-
+  //Funzione onclick x nuova ricerca
   const newSeachClick = () => {
     setResultsList([]);
     setUserSearch("");
