@@ -1,7 +1,7 @@
 import { useSearch } from "../context/FilmSearchContext";
 
 export default function MainSearch() {
-  const { resultsList, userSearch } = useSearch();
+  const { resultsList, userSearch, resultsListTv } = useSearch();
   return (
     <section className="container">
       <div>
@@ -10,15 +10,31 @@ export default function MainSearch() {
             <h1 className="mx-auto my-5">Cerca i tuoi titoli preferiti</h1>
           </div>
         )}
-        {userSearch && <p className="m-2">{resultsList.length} film trovati</p>}
+        {userSearch && (
+          <p className="m-2">
+            {resultsList.length} film trovati e {resultsListTv.length} serie tv trovate{" "}
+          </p>
+        )}
+
         <ul>
           {resultsList.map((film) => (
-            <ul key={film.id} className="card m-4">
-              <li>{film.title}</li>
-              {film.original_title ?? <li>{film.original_title}</li>}
-              <li>{film.language}</li>
-              <li>{film.stars}</li>
-            </ul>
+            <li key={film.id} className="card m-4">
+              <h3>{film.title}</h3>
+              {film.original_title && <p>{film.original_title}</p>}
+              {film.flag && <img src={film.flag} alt={film.language} width="24" />}
+              <p>{film.stars}</p>
+            </li>
+          ))}
+        </ul>
+
+        <ul>
+          {resultsListTv.map((film) => (
+            <li key={film.id} className="card m-4">
+              <h3>{film.title}</h3>
+              {film.original_title && <p>{film.original_title}</p>}
+              {film.flag && <img src={film.flag} alt={film.language} width="24" />}
+              <p>{film.stars}</p>
+            </li>
           ))}
         </ul>
       </div>

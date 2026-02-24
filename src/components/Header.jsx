@@ -2,34 +2,43 @@ import axios from "axios";
 import { useSearch } from "../context/FilmSearchContext";
 
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
+const apiUrlTv = " https://api.themoviedb.org/3/search/tv?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 
 export default function Header() {
   //Consumo dati da context
-  const { userSearch, setUserSearch, setResultsList } = useSearch();
+  const { userSearch, setUserSearch, setResultsList, setResultsListTv } = useSearch();
 
   //funzione gestione dati di axios
 
   const axiosDataManagement = (element) => {
+    const title = element.title || element.name;
+    const originalTitleChoice = element.original_title || element.original_name;
+    const original_title = originalTitleChoice === title ? "" : originalTitleChoice;
+    const language = element.original_language || element.origin_country;
     return {
       id: element.id,
-      title: element.title,
-      original_title: element.original_title === element.title ? "" : element.original_title,
-      language: element.original_language,
+      title,
+      original_title,
+      language,
+      flag: language ? `https://flagcdn.com/16x12/${language.toLowerCase()}.png` : null,
       stars: element.vote_average,
     };
   };
 
-  //Funzione submut della search
+  //Funzione submit della search
   const formSubmit = (e) => {
     e.preventDefault();
-    console.log("submit", userSearch);
-    // chiamata axios
-    axios.get(`${apiUrl}${userSearch}`).then((res) => {
-      const normalizedData = res.data.results.map((film) => axiosDataManagement(film));
-      setResultsList(normalizedData);
-      console.log(res.data.results);
+
+    const promises = [axios.get(`${apiUrl}${userSearch}`), axios.get(`${apiUrlTv}${userSearch}`)];
+
+    Promise.all(promises).then((responses) => {
+      const filmResponse = responses[0].data.results.map((film) => axiosDataManagement(film));
+      const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
+      setResultsList(filmResponse);
+      setResultsListTv(tvShowResponse);
     });
   };
+
   //Funzione onclick x nuova ricerca
   const newSeachClick = () => {
     setResultsList([]);
