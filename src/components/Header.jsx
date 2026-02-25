@@ -15,13 +15,15 @@ export default function Header() {
     const originalTitleChoice = element.original_title || element.original_name;
     const original_title = originalTitleChoice === title ? "" : originalTitleChoice;
     const language = element.original_language || element.origin_country;
+    const stars = Math.round(element.vote_average / 2);
     return {
       id: element.id,
       title,
       original_title,
       language,
       flag: language ? `https://flagcdn.com/16x12/${language.toLowerCase()}.png` : null,
-      stars: element.vote_average,
+      stars,
+      img: element.poster_path || element.backdrop_path,
     };
   };
 
@@ -36,19 +38,61 @@ export default function Header() {
       const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
       setResultsList(filmResponse);
       setResultsListTv(tvShowResponse);
+      console.log(filmResponse);
     });
   };
 
   //Funzione onclick x nuova ricerca
   const newSeachClick = () => {
-    setResultsList([]);
     setUserSearch("");
+    setResultsList([]);
+    setResultsListTv([]);
   };
 
   return (
     <header className="bg-light">
-      <section className="container">
-        <div className="row">
+      <section className="">
+        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+          <div className="container-fluid">
+            <div>
+              <a className="navbar-brand" href="#">
+                BoolFlix
+              </a>
+            </div>
+            <div>
+              {/* FORM */}
+              <form onSubmit={formSubmit} className="d-flex ms-auto align-items-center">
+                <input value={userSearch} onChange={(e) => setUserSearch(e.target.value)} type="text" className="form-control" id="filmSearch" placeholder="Cerca un titolo..." />
+
+                <button type="submit" className="btn btn-dark mx-1">
+                  Cerca
+                </button>
+                <button onClick={newSeachClick} type="button" className="btn btn-dark mx-1 text-nowrap">
+                  Nuova ricerca
+                </button>
+              </form>
+            </div>
+          </div>
+        </nav>
+      </section>
+    </header>
+  );
+}
+
+{
+  /* <div class="col-12">
+    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+    <select class="form-select" id="inlineFormSelectPref">
+      <option selected>Choose...</option>
+      <option value="1">One</option>
+      <option value="2">Two</option>
+      <option value="3">Three</option>
+    </select>
+  </div> */
+}
+
+{
+  /* <div className="row">
           <div className="col-6 p-2">
             <h1>BoolFlix</h1>
           </div>
@@ -72,20 +116,5 @@ export default function Header() {
               </div>
             </form>
           </div>
-        </div>
-      </section>
-    </header>
-  );
-}
-
-{
-  /* <div class="col-12">
-    <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
-    <select class="form-select" id="inlineFormSelectPref">
-      <option selected>Choose...</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
-    </select>
-  </div> */
+        </div> */
 }
