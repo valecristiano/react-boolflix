@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useSearch } from "../context/FilmSearchContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 const apiUrlTv = " https://api.themoviedb.org/3/search/tv?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 
 export default function Header() {
   //Consumo dati da context
-  const { userSearch, setUserSearch, setResultsList, setResultsListTv } = useSearch();
+  const { userSearch, setUserSearch, setResultsList, setResultsListTv, isLoading, setIsLoading, errorApi, setErrorApi } = useSearch();
 
   //funzione gestione dati di axios
 
@@ -32,18 +32,28 @@ export default function Header() {
   //Funzione submit della search
   const formSubmit = (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const promises = [axios.get(`${apiUrl}${userSearch}`), axios.get(`${apiUrlTv}${userSearch}`)];
 
-    Promise.all(promises).then((responses) => {
-      const filmResponse = responses[0].data.results.map((film) => axiosDataManagement(film));
-      const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
-      setResultsList(filmResponse);
-      setResultsListTv(tvShowResponse);
-      console.log(responses[0].data);
-      console.log(responses[1].data);
-    });
+    Promise.all(promises)
+      .then((responses) => {
+        const filmResponse = responses[0].data.results.map((film) => axiosDataManagement(film));
+        const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
+        setResultsList(filmResponse);
+        setResultsListTv(tvShowResponse);
+      })
+      .finally(() => setIsLoading(false));
   };
+
+  if (isLoading)
+    return (
+      <div className="container layover">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
 
   //Funzione onclick x nuova ricerca
   const newSeachClick = () => {
