@@ -1,16 +1,23 @@
 import axios from "axios";
 import { useSearch } from "../context/FilmSearchContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
-const apiUrlTv = " https://api.themoviedb.org/3/search/tv?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
+const apiUrlTv = "https://api.themoviedb.org/3/search/tv?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 
 export default function Header() {
   //Consumo dati da context
-  const { userSearch, setUserSearch, setResultsList, setResultsListTv, isLoading, setIsLoading, errorApi, setErrorApi } = useSearch();
+  const { setResultsList, setResultsListTv, isLoading, setIsLoading } = useSearch();
+
+  //stato input
+  const [userSearch, setUserSearch] = useState("");
+
+  // stato Navigate
+
+  const navigate = useNavigate();
 
   //funzione gestione dati di axios
-
   const axiosDataManagement = (element) => {
     const title = element.title || element.name;
     const originalTitleChoice = element.original_title || element.original_name;
@@ -29,9 +36,10 @@ export default function Header() {
     };
   };
 
-  //Funzione submit della search
+  //Funzione submit della search - Axios
   const formSubmit = (e) => {
     e.preventDefault();
+
     setIsLoading(true);
 
     const promises = [axios.get(`${apiUrl}${userSearch}`), axios.get(`${apiUrlTv}${userSearch}`)];
@@ -42,10 +50,17 @@ export default function Header() {
         const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
         setResultsList(filmResponse);
         setResultsListTv(tvShowResponse);
+        console.log(responses[0].data);
+        console.log(responses[1].data);
+      })
+      .catch((err) => {
+        console.error("ERRORE", err);
+        navigate("/404");
       })
       .finally(() => setIsLoading(false));
   };
 
+  //Loading
   if (isLoading)
     return (
       <div className="container layover">
@@ -80,6 +95,7 @@ export default function Header() {
                 <button type="submit" className="btn btn-dark mx-1">
                   Cerca
                 </button>
+
                 <button onClick={newSeachClick} type="button" className="btn btn-dark mx-1 text-nowrap">
                   Nuova ricerca
                 </button>
