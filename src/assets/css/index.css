@@ -1,0 +1,22 @@
+/* Page Background color */
+* {
+  background-color: black;
+  color: white;
+}
+
+/* effetto hover su card */
+.box img {
+  display: block;
+}
+
+.box .info-card {
+  display: none;
+}
+
+.box:hover .poster-img {
+  display: none;
+}
+
+.box:hover .info-card {
+  display: block;
+}

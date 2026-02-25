@@ -42,6 +42,9 @@ lasciando le restanti vuote (troviamo le icone in FontAwesome).
 Arrotondiamo sempre per eccesso all’unità successiva, non gestiamo icone mezze
 piene (o mezze vuote :P)
 
+<i class="bi bi-star"></i> star vuota
+<i class="bi bi-star-fill"></i> star piena
+
 # Milestone 4:
 
 Trasformiamo quello che abbiamo fatto fino ad ora in una vera e propria webapp,

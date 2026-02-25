@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useSearch } from "../context/FilmSearchContext";
+import { Link } from "react-router-dom";
 
 const apiUrl = "https://api.themoviedb.org/3/search/movie?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
 const apiUrlTv = " https://api.themoviedb.org/3/search/tv?api_key=0884b4dae30455ae610cbf84ab65d490&query=";
@@ -24,6 +25,7 @@ export default function Header() {
       flag: language ? `https://flagcdn.com/16x12/${language.toLowerCase()}.png` : null,
       stars,
       img: element.poster_path || element.backdrop_path,
+      overview: element.overview,
     };
   };
 
@@ -38,7 +40,8 @@ export default function Header() {
       const tvShowResponse = responses[1].data.results.map((tvShow) => axiosDataManagement(tvShow));
       setResultsList(filmResponse);
       setResultsListTv(tvShowResponse);
-      console.log(filmResponse);
+      console.log(responses[0].data);
+      console.log(responses[1].data);
     });
   };
 
@@ -52,17 +55,17 @@ export default function Header() {
   return (
     <header className="bg-light">
       <section className="">
-        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <nav className="navbar navbar-expand-lg bg-dark border-bottom border-body p-1 m-3" data-bs-theme="dark">
           <div className="container-fluid">
-            <div>
-              <a className="navbar-brand" href="#">
+            <div className="m-2">
+              <Link to="/" className="navbar-brand">
                 BoolFlix
-              </a>
+              </Link>
             </div>
-            <div>
+            <div className="m-2">
               {/* FORM */}
               <form onSubmit={formSubmit} className="d-flex ms-auto align-items-center">
-                <input value={userSearch} onChange={(e) => setUserSearch(e.target.value)} type="text" className="form-control" id="filmSearch" placeholder="Cerca un titolo..." />
+                <input value={userSearch} onChange={(e) => setUserSearch(e.target.value)} type="text" className="form-control mx-1" id="filmSearch" placeholder="Cerca un titolo..." />
 
                 <button type="submit" className="btn btn-dark mx-1">
                   Cerca
@@ -89,32 +92,4 @@ export default function Header() {
       <option value="3">Three</option>
     </select>
   </div> */
-}
-
-{
-  /* <div className="row">
-          <div className="col-6 p-2">
-            <h1>BoolFlix</h1>
-          </div>
-          <div className="col-6">
-            <form onSubmit={formSubmit} className="row row-cols-lg-auto g-3 justify-content-end align-items-center m-auto">
-              <div className="col-12">
-                <div className="input-group">
-                  <label className="col-4 form-label m-auto" htmlFor="filmSearch">
-                    Ricerca titoli
-                  </label>
-                  <input value={userSearch} onChange={(e) => setUserSearch(e.target.value)} type="text" className="form-control" id="filmSearch" />
-                </div>
-              </div>
-              <div className="col-12">
-                <button type="submit" className="btn btn-dark mx-1">
-                  Cerca
-                </button>
-                <button onClick={newSeachClick} type="button" className="btn btn-dark mx-1">
-                  Nuova ricerca
-                </button>
-              </div>
-            </form>
-          </div>
-        </div> */
 }
